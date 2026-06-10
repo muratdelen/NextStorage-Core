@@ -1,0 +1,30 @@
+name: Publish NextLife GHCR image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/nextlife-ghcr.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: imjasonh/setup-crane@v0.4
+      - name: Publish MinIO for NextLife
+        env:
+          SOURCE_IMAGE: minio/minio:latest
+          TARGET_IMAGE: ghcr.io/muratdelen/nextstorage-core
+        run: |
+          crane copy "$SOURCE_IMAGE" "$TARGET_IMAGE:latest"
+          crane copy "$SOURCE_IMAGE" "$TARGET_IMAGE:git-${GITHUB_SHA::12}"
