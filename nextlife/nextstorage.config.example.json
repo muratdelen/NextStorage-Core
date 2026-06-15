@@ -1,0 +1,95 @@
+{
+  "module": "nextstorage",
+  "displayName": "NextStorage",
+  "engine": "minio",
+  "identity": {
+    "provider": "nextid",
+    "issuer": "http://login.harran.edu.tr/realms/harranuniversity",
+    "enabled": false,
+    "adminRoles": [
+      "NEXTSTORAGE_ADMIN"
+    ],
+    "auditorRoles": [
+      "NEXTSTORAGE_AUDITOR"
+    ]
+  },
+  "authorization": {
+    "provider": "nextrole",
+    "enabled": false,
+    "denyByDefault": true,
+    "fallbackTokenRoles": [
+      "NEXTSTORAGE_ADMIN",
+      "NEXTSTORAGE_OPERATOR",
+      "NEXTSTORAGE_SERVICE",
+      "NEXTSTORAGE_AUDITOR",
+      "NEXTSTORAGE_READONLY"
+    ]
+  },
+  "audit": {
+    "provider": "nextlog",
+    "enabled": false,
+    "endpointEnv": "NEXTLOG_AUDIT_URL",
+    "apiKeyEnv": "NEXTLOG_API_KEY",
+    "failOpen": true
+  },
+  "buckets": [
+    {
+      "name": "nextdocs-originals",
+      "ownerModule": "nextdocs",
+      "publicAccess": false,
+      "versioning": true,
+      "retention": false
+    },
+    {
+      "name": "nextdocs-derived",
+      "ownerModule": "nextdocs",
+      "publicAccess": false,
+      "versioning": true,
+      "retention": false
+    },
+    {
+      "name": "nextdocs-archive",
+      "ownerModule": "nextdocs",
+      "publicAccess": false,
+      "versioning": true,
+      "retention": true
+    },
+    {
+      "name": "nextlife-temp",
+      "ownerModule": "platform",
+      "publicAccess": false,
+      "versioning": false,
+      "retention": false,
+      "lifecycleDays": 1
+    },
+    {
+      "name": "nextlife-backups",
+      "ownerModule": "platform",
+      "publicAccess": false,
+      "versioning": true,
+      "retention": true
+    }
+  ],
+  "serviceAccounts": [
+    {
+      "name": "svc-nextdocs-storage",
+      "allowedBuckets": [
+        "nextdocs-originals",
+        "nextdocs-derived",
+        "nextdocs-archive"
+      ]
+    },
+    {
+      "name": "svc-nextbackup-storage",
+      "allowedBuckets": [
+        "nextlife-backups"
+      ]
+    },
+    {
+      "name": "svc-nextsearch-storage",
+      "allowedBuckets": [
+        "nextdocs-derived"
+      ]
+    }
+  ]
+}
