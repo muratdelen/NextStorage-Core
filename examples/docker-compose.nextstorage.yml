@@ -1,0 +1,24 @@
+services:
+  nextstorage:
+    image: ghcr.io/muratdelen/nextstorage-core:${NEXTSTORAGE_CORE_IMAGE_TAG:-latest}
+    container_name: nextstorage
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-nextlife}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change_me}
+      MINIO_BROWSER_REDIRECT_URL: ${MINIO_BROWSER_REDIRECT_URL:-http://nextstorage.harran.edu.tr}
+    ports:
+      - "${NEXTSTORAGE_API_PORT:-9000}:9000"
+      - "${NEXTSTORAGE_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - nextstorage-data:/data
+    networks:
+      - nextlife-network
+    restart: unless-stopped
+
+volumes:
+  nextstorage-data:
+
+networks:
+  nextlife-network:
+    external: true
